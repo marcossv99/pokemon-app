@@ -37,6 +37,7 @@ class DatabaseHelper {
       {'id': pokemon.id, 'name': pokemon.name, 'types': pokemon.types.join(', ')},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    print("Pokémon inserido no cache: ${pokemon.name}");
   }
 
   Future<List<Pokemon>> getCachedPokemons() async {
@@ -56,5 +57,6 @@ class DatabaseHelper {
   Future<void> clearCache() async {
     final db = await database;
     await db.delete('pokemons');
+    print("Cache de Pokémons limpo.");
   }
 }

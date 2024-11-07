@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const Home(),
         '/pokedex': (context) => const Pokedex(),
-        '/dailyEncounter': (context) => const EncontroDiarioPage(),
-        '/myPokemons': (context) => const MeusPokemonsPage(),
+        '/encontroDiario': (context) => const EncontroDiarioPage(),
+        '/meusPokemons': (context) => const MeusPokemonsPage(),
       },
     );
   }
