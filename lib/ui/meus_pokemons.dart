@@ -30,12 +30,10 @@ class _MeusPokemonsPageState extends State<MeusPokemonsPage> {
 
     final List<Pokemon> pokemons = [];
     for (String id in meusPokemonsIds) {
-      try {
-        final pokemonId = int.parse(id);
-        Pokemon? pokemon = await _pokemonService.getPokemonById(pokemonId);
+      final pokemonId = int.parse(id);
+      Pokemon? pokemon = await _pokemonService.getPokemonById(pokemonId);
+      if (pokemon != null) {
         pokemons.add(pokemon);
-            } catch (e) {
-        print("Erro ao carregar Pokémon com ID $id: $e");
       }
     }
 
@@ -54,7 +52,15 @@ class _MeusPokemonsPageState extends State<MeusPokemonsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Meus Pokémons'),
+        titleTextStyle: const TextStyle(
+          color: Color.fromARGB(255, 18, 18, 18),
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        toolbarHeight: 120,
       ),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: ListView.builder(
         itemCount: _meusPokemons.length,
         itemBuilder: (context, index) {

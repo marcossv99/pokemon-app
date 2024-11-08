@@ -149,8 +149,8 @@ class _EncontroDiarioPageState extends State<EncontroDiarioPage> {
                           color: Colors.blue),
                     ),
                     const SizedBox(height: 20),
-                    // Círculo atrás da imagem do Pokémon
                     Stack(
+                      
                       alignment: Alignment.center,
                       children: [
                         Container(

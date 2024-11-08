@@ -30,19 +30,15 @@ class _PokedexPageState extends State<Pokedex> {
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    try {
-      final newPokemons =
-          await _pokemonService.fetchPokemonsPage(pageKey, pageSize);
-      final isLastPage = newPokemons.length < pageSize;
+    final newPokemons =
+        await _pokemonService.fetchPokemonsPage(pageKey, pageSize);
+    final isLastPage = newPokemons.length < pageSize;
 
-      if (isLastPage) {
-        _pagingController.appendLastPage(newPokemons);
-      } else {
-        final nextPageKey = pageKey + newPokemons.length;
-        _pagingController.appendPage(newPokemons, nextPageKey);
-      }
-    } catch (error) {
-      _pagingController.error = error;
+    if (isLastPage) {
+      _pagingController.appendLastPage(newPokemons);
+    } else {
+      final nextPageKey = pageKey + newPokemons.length;
+      _pagingController.appendPage(newPokemons, nextPageKey);
     }
   }
 
@@ -92,7 +88,8 @@ class _PokedexPageState extends State<Pokedex> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PokemonCard(pokemon: pokemon),
+                            builder: (context) => PokemonCard(
+                                pokemon: pokemon), // Abre a tela de detalhes
                           ),
                         );
                       },

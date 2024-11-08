@@ -21,9 +21,16 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     return openDatabase(
       join(dbPath, 'pokemon_cache.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE pokemons(id INTEGER PRIMARY KEY, name TEXT, types TEXT)',
+      onCreate: (db, version) async {
+        await db.execute(
+          '''
+          CREATE TABLE pokemons(
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            types TEXT,
+            baseStats TEXT
+          )
+          '''
         );
       },
       version: 1,
@@ -34,10 +41,28 @@ class DatabaseHelper {
     final db = await database;
     await db.insert(
       'pokemons',
-      {'id': pokemon.id, 'name': pokemon.name, 'types': pokemon.types.join(', ')},
+      {
+        'id': pokemon.id,
+        'name': pokemon.name,
+        'types': pokemon.types.join(', '),
+        'baseStats': _mapToString(pokemon.baseStats),
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    print("Pokémon inserido no cache: ${pokemon.name}");
+  }
+
+  Future<void> updatePokemon(Pokemon pokemon) async {
+    final db = await database;
+    await db.update(
+      'pokemons',
+      {
+        'name': pokemon.name,
+        'types': pokemon.types.join(', '),
+        'baseStats': _mapToString(pokemon.baseStats),
+      },
+      where: 'id = ?',
+      whereArgs: [pokemon.id],
+    );
   }
 
   Future<List<Pokemon>> getCachedPokemons() async {
@@ -49,7 +74,7 @@ class DatabaseHelper {
         id: maps[i]['id'],
         name: maps[i]['name'],
         types: maps[i]['types'].split(', '),
-        baseStats: {}, // Define um mapa vazio para baseStats
+        baseStats: _stringToMap(maps[i]['baseStats']),
       );
     });
   }
@@ -57,6 +82,21 @@ class DatabaseHelper {
   Future<void> clearCache() async {
     final db = await database;
     await db.delete('pokemons');
-    print("Cache de Pokémons limpo.");
+  }
+
+  // Converte um Map<String, int> para uma String JSON para armazenamento
+  String _mapToString(Map<String, int> map) {
+    return map.entries.map((e) => '${e.key}:${e.value}').join(',');
+  }
+
+  // Converte a String JSON de volta para um Map<String, int>
+  Map<String, int> _stringToMap(String? str) {
+    if (str == null || str.isEmpty) return {};
+    return Map.fromEntries(
+      str.split(',').map((entry) {
+        final split = entry.split(':');
+        return MapEntry(split[0], int.parse(split[1]));
+      }),
+    );
   }
 }
